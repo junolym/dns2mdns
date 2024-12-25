@@ -81,16 +81,21 @@ func (h *handler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		}
 		return
 	}
-	qZone := labels[len(labels)-1]
-	if qZone != zone {
-		msg.SetRcode(r, dns.RcodeRefused)
-		log.Printf("non-authoritative question from %s rejecting zone %q", clientIP, qZone)
-		err = w.WriteMsg(&msg)
-		if err != nil {
-			log.Printf("error on WriteMsg: %s", err)
-		}
-		return
-	}
+
+	new_labels := labels[:2]
+	real_domain := domain
+	domain = strings.Join(new_labels, ".")
+
+	// qZone := labels[len(labels)-1]
+	// if qZone != zone {
+	// 	msg.SetRcode(r, dns.RcodeRefused)
+	// 	log.Printf("non-authoritative question from %s rejecting zone %q", clientIP, qZone)
+	// 	err = w.WriteMsg(&msg)
+	// 	if err != nil {
+	// 		log.Printf("error on WriteMsg: %s", err)
+	// 	}
+	// 	return
+	// }
 
 	ctx, cancel := context.WithTimeout(h.ctx, *requestTimeout)
 	defer cancel()
@@ -134,12 +139,12 @@ func (h *handler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		for _, ip := range ips {
 			if ip.To4() != nil {
 				msg.Answer = append(msg.Answer, &dns.A{
-					Hdr: dns.RR_Header{Name: domain, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: defaultTTL},
+					Hdr: dns.RR_Header{Name: real_domain, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: defaultTTL},
 					A:   ip,
 				})
 			} else {
 				msg.Answer = append(msg.Answer, &dns.AAAA{
-					Hdr:  dns.RR_Header{Name: domain, Rrtype: dns.TypeAAAA, Class: dns.ClassINET, Ttl: defaultTTL},
+					Hdr:  dns.RR_Header{Name: real_domain, Rrtype: dns.TypeAAAA, Class: dns.ClassINET, Ttl: defaultTTL},
 					AAAA: ip,
 				})
 			}
