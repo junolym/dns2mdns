@@ -19,7 +19,7 @@ var dnsCache cache.Cache
 const defaultTTL = 60
 
 func startServer(ctx context.Context) error {
-	listen := net.JoinHostPort(*listenAddr, "53")
+	listen := net.JoinHostPort(*listenAddr, *listenPort)
 	log.Printf("starting DNS server on %s", listen)
 	var g errgroup.Group
 

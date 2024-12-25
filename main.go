@@ -16,6 +16,7 @@ var (
 	interfaces     = flag.String("i", "", "comma separated list of interfaces to send mdns probes on, defaults to all")
 	requestTimeout = flag.Duration("timeout", time.Second, "timeout for each request")
 	listenAddr     = flag.String("listen", "0.0.0.0", "address to listen on for incoming DNS queries")
+	listenPort     = flag.String("port", "53", "port to listen on for incoming DNS queries")
 	zoneFlag       = flag.String("zone", "local", "zone to relay to mdns")
 	verbose        = flag.Bool("verbose", false, "enable verbose logs")
 )
