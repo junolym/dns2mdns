@@ -6,6 +6,21 @@ This can help hosts on your LAN resolve mdns host names even if they do not supp
 
 This is typically a bad idea, so only run this if you know what you are doing.
 
+## Installation
+
+Download the latest pre-built binary from [GitHub Releases](https://github.com/junolym/dns2mdns/releases/latest):
+
+```bash
+curl -sL -o dns2mdns https://github.com/junolym/dns2mdns/releases/latest/download/dns2mdns-linux-amd64
+chmod +x dns2mdns
+```
+
+Or build from source:
+
+```bash
+CGO_ENABLED=0 go build -ldflags "-w -s" -trimpath -o dns2mdns .
+```
+
 ## Usage
 
 ```text
