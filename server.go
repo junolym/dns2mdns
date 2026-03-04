@@ -82,6 +82,17 @@ func (h *handler) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
 		return
 	}
 
+	// need at least 2 labels (e.g. "nas.local"), reject malformed queries
+	if len(labels) < 2 {
+		msg.SetRcode(r, dns.RcodeRefused)
+		log.Printf("[%s] rejecting query with less than 2 labels: %q", clientIP, domain)
+		err = w.WriteMsg(&msg)
+		if err != nil {
+			log.Printf("error on WriteMsg: %s", err)
+		}
+		return
+	}
+
 	new_labels := labels[:2]
 	real_domain := domain
 	domain = strings.Join(new_labels, ".")
